@@ -1,0 +1,334 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════
+   Brewbit POS — Design System
+   Identity: Dark Luxury + Warm Hospitality
+   Primary: Warm Amber (not purple!)
+   ═══════════════════════════════════════════════ */
+
+/* ─── Tailwind v4 Theme Tokens ─────────────── */
+@theme inline {
+  --color-background: var(--bg-base);
+  --color-foreground: var(--text-primary);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* ── Primary: Warm Amber ─────────────────── */
+  --color-primary-50: oklch(97% 0.02 75);
+  --color-primary-100: oklch(93% 0.04 75);
+  --color-primary-200: oklch(87% 0.08 75);
+  --color-primary-300: oklch(80% 0.12 75);
+  --color-primary-400: oklch(73% 0.16 75);
+  --color-primary-500: oklch(65% 0.18 75);
+  --color-primary-600: oklch(55% 0.16 75);
+  --color-primary-700: oklch(45% 0.14 75);
+  --color-primary-800: oklch(35% 0.1 75);
+  --color-primary-900: oklch(25% 0.06 75);
+
+  /* ── Semantic Colors ─────────────────────── */
+  --color-success: oklch(70% 0.18 155);
+  --color-success-light: oklch(93% 0.04 155);
+  --color-danger: oklch(60% 0.22 25);
+  --color-danger-light: oklch(93% 0.04 25);
+  --color-warning: oklch(78% 0.15 80);
+  --color-warning-light: oklch(95% 0.03 80);
+  --color-info: oklch(65% 0.15 250);
+  --color-info-light: oklch(95% 0.03 250);
+
+  /* ── Table Status Colors ─────────────────── */
+  --color-table-free: oklch(75% 0.18 155);
+  --color-table-occupied: oklch(72% 0.16 65);
+  --color-table-reserved: oklch(68% 0.15 250);
+  --color-table-dirty: oklch(65% 0.18 25);
+
+  /* ── Neutrals (warm-tinted, not dead gray) ─ */
+  --color-neutral-50: oklch(98% 0.005 75);
+  --color-neutral-100: oklch(95% 0.008 75);
+  --color-neutral-200: oklch(90% 0.01 75);
+  --color-neutral-300: oklch(82% 0.01 75);
+  --color-neutral-400: oklch(65% 0.01 75);
+  --color-neutral-500: oklch(50% 0.01 75);
+  --color-neutral-600: oklch(40% 0.01 75);
+  --color-neutral-700: oklch(30% 0.01 75);
+  --color-neutral-800: oklch(20% 0.008 75);
+  --color-neutral-900: oklch(12% 0.005 75);
+
+  /* Spacing overrides removed to prevent breaking Tailwind v4 max-w-* and w-* utilities */
+
+  /* ── Radii ───────────────────────────────── */
+  --radius-sharp: 2px;
+  --radius-default: 12px;
+  --radius-soft: 20px;
+  --radius-pill: 9999px;
+
+  /* ── Shadows (layered, realistic) ────────── */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm:
+    0 1px 2px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.03), 0 4px 8px
+    rgba(0, 0, 0, 0.03);
+  --shadow-md:
+    0 2px 4px rgba(0, 0, 0, 0.02), 0 4px 8px rgba(0, 0, 0, 0.03), 0 8px 16px
+    rgba(0, 0, 0, 0.04), 0 16px 32px rgba(0, 0, 0, 0.04);
+  --shadow-lg:
+    0 4px 8px rgba(0, 0, 0, 0.02), 0 8px 16px rgba(0, 0, 0, 0.04), 0 16px 32px
+    rgba(0, 0, 0, 0.06), 0 32px 64px rgba(0, 0, 0, 0.08);
+
+  /* ── Typography Scale ── */
+  --text-4xs: clamp(0.45rem, 0.1vw + 0.45rem, 0.5rem);
+  --text-3xs: clamp(0.55rem, 0.1vw + 0.55rem, 0.6rem);
+  --text-2xs: clamp(0.65rem, 0.15vw + 0.6rem, 0.7rem);
+  --text-xs: clamp(0.7rem, 0.15vw + 0.65rem, 0.8rem);
+  --text-sm: clamp(0.8rem, 0.2vw + 0.75rem, 0.9rem);
+  --text-base: clamp(0.9rem, 0.25vw + 0.85rem, 1.05rem);
+  --text-lg: clamp(1.1rem, 0.4vw + 0.95rem, 1.35rem);
+  --text-xl: clamp(1.3rem, 0.8vw + 1.1rem, 1.75rem);
+  --text-2xl: clamp(1.5rem, 1.5vw + 1.2rem, 2.25rem);
+  --text-3xl: clamp(1.75rem, 3vw + 1.3rem, 3rem);
+
+  /* ── Easing ──────────────────────────────── */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring: cubic-bezier(0.22, 1.2, 0.36, 1);
+}
+
+/* ─── Light Mode (Default) ─────────────────── */
+:root {
+  --bg-base: oklch(98.5% 0.004 75);
+  --bg-surface: oklch(100% 0 0);
+  --bg-elevated: oklch(99% 0.003 75);
+  --bg-muted: oklch(96% 0.006 75);
+  --text-primary: oklch(15% 0.01 75);
+  --text-secondary: oklch(40% 0.01 75);
+  --text-tertiary: oklch(55% 0.008 75);
+  --border-default: oklch(90% 0.01 75);
+  --border-subtle: oklch(94% 0.006 75);
+}
+
+/* ─── Dark Mode ────────────────────────────── */
+[data-theme="dark"] {
+  --bg-base: oklch(9% 0.005 75);
+  --bg-surface: oklch(13% 0.008 75);
+  --bg-elevated: oklch(18% 0.01 75);
+  --bg-muted: oklch(15% 0.006 75);
+  --text-primary: oklch(93% 0.005 75);
+  --text-secondary: oklch(65% 0.01 75);
+  --text-tertiary: oklch(50% 0.008 75);
+  --border-default: oklch(22% 0.01 75);
+  --border-subtle: oklch(18% 0.008 75);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-base: oklch(9% 0.005 75);
+    --bg-surface: oklch(13% 0.008 75);
+    --bg-elevated: oklch(18% 0.01 75);
+    --bg-muted: oklch(15% 0.006 75);
+    --text-primary: oklch(93% 0.005 75);
+    --text-secondary: oklch(65% 0.01 75);
+    --text-tertiary: oklch(50% 0.008 75);
+    --border-default: oklch(22% 0.01 75);
+    --border-subtle: oklch(18% 0.008 75);
+  }
+}
+
+/* ─── Base Styles ──────────────────────────── */
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Focus Styles (Accessibility) ─────────── */
+:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-sharp);
+}
+
+/* ─── Selection ────────────────────────────── */
+::selection {
+  background: var(--color-primary-200);
+  color: var(--color-primary-900);
+}
+
+/* ─── Scrollbar (Subtle) ───────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-300);
+  border-radius: var(--radius-pill);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-400);
+}
+
+/* ─── Reduced Motion ──────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Utility: Glass Effect ────────────────── */
+.glass {
+  background: oklch(100% 0 0 / 0.6);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid oklch(100% 0 0 / 0.15);
+}
+
+[data-theme="dark"] .glass {
+  background: oklch(15% 0.008 75 / 0.6);
+  border-color: oklch(30% 0.01 75 / 0.2);
+}
+
+/* ─── Utility: Grain Texture ───────────────── */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.3;
+}
+
+/* ─── Clerk Dark Theme Overrides ──────────── */
+/* Forces all Clerk internal text to be visible on dark backgrounds */
+.cl-card,
+.cl-rootBox,
+.cl-signIn-root,
+.cl-signUp-root,
+.cl-userProfile-root {
+  --clerk-foreground: #eaded2 !important;
+  --clerk-muted-foreground: #8e7e72 !important;
+  color: #eaded2 !important;
+}
+
+/* Comprehensive Clerk Contrast Override for all components */
+.cl-userProfile-root *,
+.cl-signIn-root *,
+.cl-signUp-root * {
+  color: #eaded2 !important;
+}
+
+/* Custom styles for section titles, headers, and form labels */
+.cl-userProfile-root .cl-profileSectionTitle,
+.cl-userProfile-root .cl-formFieldLabel,
+.cl-userProfile-root h1,
+.cl-userProfile-root h2,
+.cl-userProfile-root h3,
+.cl-userProfile-root h4,
+.cl-userProfile-root .cl-headerTitle,
+.cl-signIn-root .cl-headerTitle,
+.cl-signUp-root .cl-headerTitle,
+.cl-signIn-root .cl-formFieldLabel,
+.cl-signUp-root .cl-formFieldLabel,
+.cl-signIn-root h1,
+.cl-signIn-root h2,
+.cl-signUp-root h1,
+.cl-signUp-root h2 {
+  color: #eaded2 !important;
+}
+
+.cl-userProfile-root .cl-profileSectionSubtitle,
+.cl-userProfile-root .cl-headerSubtitle,
+.cl-userProfile-root p,
+.cl-userProfile-root span:not(.cl-badge),
+.cl-signIn-root p,
+.cl-signUp-root p,
+.cl-signIn-root span:not(.cl-badge),
+.cl-signUp-root span:not(.cl-badge),
+.cl-signIn-root .cl-headerSubtitle,
+.cl-signUp-root .cl-headerSubtitle {
+  color: #8e7e72 !important;
+}
+
+/* Interactive elements: buttons, links, and updates */
+.cl-userProfile-root button,
+.cl-userProfile-root a,
+.cl-userProfile-root .cl-profileSectionPrimaryButton,
+.cl-userProfile-root .cl-formButtonReset,
+.cl-signIn-root button,
+.cl-signIn-root a,
+.cl-signUp-root button,
+.cl-signUp-root a {
+  color: oklch(65% 0.18 75) !important;
+  transition: all 150ms ease !important;
+}
+
+.cl-userProfile-root button:hover,
+.cl-userProfile-root a:hover,
+.cl-signIn-root button:hover,
+.cl-signIn-root a:hover,
+.cl-signUp-root button:hover,
+.cl-signUp-root a:hover {
+  color: oklch(70% 0.18 75) !important;
+  opacity: 0.95 !important;
+}
+
+.cl-userProfile-root button *,
+.cl-userProfile-root a *,
+.cl-signIn-root button *,
+.cl-signIn-root a *,
+.cl-signUp-root button *,
+.cl-signUp-root a * {
+  color: inherit !important;
+}
+
+.cl-userProfile-root input,
+.cl-signIn-root input,
+.cl-signUp-root input {
+  color: #eaded2 !important;
+  background-color: #262220 !important;
+  border-color: oklch(22% 0.01 75) !important;
+}
+
+/* Clerk development mode and secured by clerk attribution footer overrides */
+.cl-internal-1dauvpw,
+.cl-internal-nfwx0x,
+.cl-footer,
+.cl-footerPages,
+.cl-internal-b38t6,
+.cl-internal-10y6z4e,
+.cl-internal-footer,
+.cl-internal-1p794eb,
+.cl-internal-b3al4t,
+.cl-internal-1x7o1w0,
+.cl-internal-11w7d2i,
+.cl-internal-180wb59,
+.cl-internal-u7gcvb,
+div[class*="cl-internal-footer"],
+div[class*="cl-internal-b38t6"],
+div[class*="cl-internal-10y6z4e"],
+div[class*="cl-internal-1p794eb"],
+div[class*="cl-internal-1x7o1w0"],
+div[class*="cl-internal-b3al4t"],
+.cl-footerAction,
+.cl-footerAction__securedBy,
+.cl-footer__securedBy,
+.cl-footer__developmentMode,
+.cl-developmentMode,
+[data-localization-key="auth.footer"] {
+  display: none !important;
+}
+
+/* Hide social login buttons and divider entirely on the main Staff Sign In screen */
+.clerk-staff-signin .cl-socialButtonsBlockButton,
+.clerk-staff-signin .cl-dividerRow,
+.clerk-staff-signin .cl-socialButtons {
+  display: none !important;
+}
+

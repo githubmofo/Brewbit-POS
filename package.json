@@ -1,0 +1,25 @@
+{
+  "name": "odoo-pos-cafe",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "format": "turbo format",
+    "db:generate": "npm run db:generate --workspace=apps/web",
+    "db:migrate": "npm run db:migrate --workspace=apps/web",
+    "db:studio": "npm run db:studio --workspace=apps/web"
+  },
+  "devDependencies": {
+    "turbo": "^2.9.15"
+  },
+  "packageManager": "npm@11.12.1",
+  "engines": {
+    "node": ">=20"
+  }
+}
