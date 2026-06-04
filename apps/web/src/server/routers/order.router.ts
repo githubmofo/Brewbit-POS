@@ -101,6 +101,28 @@ export const orderRouter = createTRPCRouter({
       return order ?? null;
     }),
 
+  // Lists ALL active (non-completed/cancelled) orders for a specific dining table
+  listByTable: protectedProcedure
+    .input(z.object({ tableId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const tableOrders = await ctx.db.query.orders.findMany({
+        where: and(
+          eq(orders.tableId, input.tableId),
+          not(inArray(orders.status, ["completed", "cancelled"])),
+        ),
+        orderBy: orders.createdAt,
+        with: {
+          items: {
+            with: {
+              product: true,
+              variant: true,
+            },
+          },
+        },
+      });
+      return tableOrders;
+    }),
+
   // Fetches a single order details by its direct UUID
   getById: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))

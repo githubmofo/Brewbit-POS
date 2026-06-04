@@ -110,6 +110,7 @@ export const authRouter = createTRPCRouter({
     .input(z.object({
       name: z.string().min(2),
       email: z.string().email(),
+      newPassword: z.string().min(6).optional().or(z.literal("")),
     }))
     .mutation(async ({ ctx, input }) => {
       // Check if email is being changed and is already in use
@@ -120,12 +121,18 @@ export const authRouter = createTRPCRouter({
         }
       }
 
+      const updateData: any = {
+        name: input.name,
+        email: input.email,
+        updatedAt: new Date(),
+      };
+
+      if (input.newPassword) {
+        updateData.passwordHash = await hashPassword(input.newPassword);
+      }
+
       await db.update(users)
-        .set({
-          name: input.name,
-          email: input.email,
-          updatedAt: new Date(),
-        })
+        .set(updateData)
         .where(eq(users.id, ctx.user.id));
 
       return { success: true };

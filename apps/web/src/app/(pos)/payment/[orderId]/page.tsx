@@ -20,6 +20,7 @@ import { cn, formatCurrency } from "@web/lib/utils";
 export default function PosPaymentPage() {
   const params = useParams();
   const router = useRouter();
+  const utils = trpc.useUtils();
 
   // Extract orderId safely in Next.js 15 App Router
   const orderId = params.orderId as string;
@@ -29,8 +30,16 @@ export default function PosPaymentPage() {
     trpc.order.getById.useQuery({ id: orderId });
   const { data: paymentConfigs = [] } = trpc.payment.getConfigs.useQuery();
 
-  const processPaymentMutation = trpc.payment.process.useMutation();
-  const confirmPaymentMutation = trpc.payment.confirm.useMutation();
+  const processPaymentMutation = trpc.payment.process.useMutation({
+    onSuccess: () => {
+      utils.floor.list.invalidate();
+    },
+  });
+  const confirmPaymentMutation = trpc.payment.confirm.useMutation({
+    onSuccess: () => {
+      utils.floor.list.invalidate();
+    },
+  });
 
   // ─── LOCAL STATE ────────────────────────────────────────────────────────────
   const [selectedMethod, setSelectedMethod] = useState<

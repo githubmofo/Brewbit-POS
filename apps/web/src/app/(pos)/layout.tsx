@@ -37,7 +37,7 @@ export default function PosLayout({ children }: { children: React.ReactNode }) {
     onSuccess: () => {
       clearSession();
       setIsCloseModalOpen(false);
-      window.location.href = "/products";
+      window.location.href = "/reports";
     },
     onError: (err) => setCloseRegisterError(err.message),
   });

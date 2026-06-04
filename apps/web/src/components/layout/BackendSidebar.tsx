@@ -167,20 +167,22 @@ export function BackendSidebar() {
           </div>
 
           {/* Logged in User Profile Info */}
-          <div className="flex items-center justify-between rounded-xl bg-[#1C1816] p-3.5 border border-[#2C2724]/40">
+          <Link
+            href="/profile"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center justify-between rounded-xl bg-[#1C1816] p-3.5 border border-[#2C2724]/40 hover:border-[#E28743]/50 transition-colors"
+          >
             <div className="flex items-center gap-3">
-            <div className="flex flex-col truncate max-w-[140px] pl-2">
+              <div className="flex flex-col truncate max-w-[140px] pl-2">
                 <span className="text-sm font-semibold text-[#EADED2] truncate leading-tight">
                   {user?.name || "Employee"}
                 </span>
                 <span className="text-2xs font-medium text-[#8E7E72] tracking-wider uppercase">
-                  {user?.role === "admin"
-                    ? "Admin"
-                    : "Cashier"}
+                  {user?.role === "admin" ? "Admin" : "Cashier"}
                 </span>
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       </aside>
     </>

@@ -189,7 +189,7 @@ export default function KDSPage() {
             </div>
           </div>
         ) : (
-          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 pb-6">
+          <div className="flex flex-col gap-5 pb-6 max-w-4xl mx-auto w-full">
             {filteredTickets.map((ticket) => {
               // Calculate ticket age
               const ticketTime = new Date(ticket.createdAt);
@@ -322,10 +322,24 @@ export default function KDSPage() {
                                     {item.notes}
                                   </p>
                                 )}
-                                {item.priority === "important" && !isDone && (
-                                  <p className="text-xs text-red-400 font-bold mt-1.5 bg-red-400/10 inline-block px-1.5 py-0.5 rounded ml-2">
-                                    Fast Ready
-                                  </p>
+                                {!isDone && (
+                                  <>
+                                    {item.priority === "important" && (
+                                      <p className="text-xs text-red-400 font-bold mt-1.5 bg-red-400/10 inline-block px-1.5 py-0.5 rounded ml-2">
+                                        Fast Ready
+                                      </p>
+                                    )}
+                                    {item.priority === "normal" && (
+                                      <p className="text-xs text-yellow-400 font-bold mt-1.5 bg-yellow-400/10 inline-block px-1.5 py-0.5 rounded ml-2">
+                                        Medium
+                                      </p>
+                                    )}
+                                    {item.priority === "not_important" && (
+                                      <p className="text-xs text-[#888] font-bold mt-1.5 bg-[#333] inline-block px-1.5 py-0.5 rounded ml-2">
+                                        Not Important
+                                      </p>
+                                    )}
+                                  </>
                                 )}
                               </div>
                             </div>

@@ -363,8 +363,8 @@ async function seed(): Promise<void> {
       ],
     },
     {
-      name: "Pepperoni Pizza",
-      description: "Loaded with spicy pepperoni slices and extra mozzarella",
+      name: "Veggie Supreme Pizza",
+      description: "Loaded with bell peppers, olives, jalapeños, and extra mozzarella",
       price: "299.00",
       categoryName: "Pizza",
       taxRate: "5.00",
@@ -387,9 +387,9 @@ async function seed(): Promise<void> {
       ],
     },
     {
-      name: "BBQ Chicken Pizza",
+      name: "BBQ Paneer Pizza",
       description:
-        "Smoky BBQ sauce, grilled chicken, red onions, and jalapeños",
+        "Smoky BBQ sauce, grilled paneer, red onions, and jalapeños",
       price: "349.00",
       categoryName: "Pizza",
       taxRate: "5.00",
@@ -435,6 +435,66 @@ async function seed(): Promise<void> {
         },
       ],
     },
+    {
+      name: "Four Cheese Pizza",
+      description: "Mozzarella, cheddar, parmesan, and gouda blend",
+      price: "329.00",
+      categoryName: "Pizza",
+      taxRate: "5.00",
+      variants: [
+        { attributeName: "Size", attributeValue: "Regular", extraPrice: "0.00" },
+        { attributeName: "Size", attributeValue: "Medium", extraPrice: "80.00" },
+        { attributeName: "Size", attributeValue: "Large", extraPrice: "150.00" },
+      ],
+    },
+    {
+      name: "Mushroom & Olive Pizza",
+      description: "Earthy mushrooms, black olives, and truffle oil",
+      price: "269.00",
+      categoryName: "Pizza",
+      taxRate: "5.00",
+      variants: [
+        { attributeName: "Size", attributeValue: "Regular", extraPrice: "0.00" },
+        { attributeName: "Size", attributeValue: "Medium", extraPrice: "80.00" },
+        { attributeName: "Size", attributeValue: "Large", extraPrice: "150.00" },
+      ],
+    },
+    {
+      name: "Spinach & Corn Pizza",
+      description: "Creamy spinach base with sweet corn and feta",
+      price: "259.00",
+      categoryName: "Pizza",
+      taxRate: "5.00",
+      variants: [
+        { attributeName: "Size", attributeValue: "Regular", extraPrice: "0.00" },
+        { attributeName: "Size", attributeValue: "Medium", extraPrice: "80.00" },
+        { attributeName: "Size", attributeValue: "Large", extraPrice: "150.00" },
+      ],
+    },
+    {
+      name: "Tandoori Mushroom Pizza",
+      description: "Spicy tandoori mushrooms, onions, and coriander",
+      price: "289.00",
+      categoryName: "Pizza",
+      taxRate: "5.00",
+      variants: [
+        { attributeName: "Size", attributeValue: "Regular", extraPrice: "0.00" },
+        { attributeName: "Size", attributeValue: "Medium", extraPrice: "80.00" },
+        { attributeName: "Size", attributeValue: "Large", extraPrice: "150.00" },
+      ],
+    },
+    {
+      name: "Veg Extravaganza",
+      description: "Overloaded with all veggies, extra cheese, and olives",
+      price: "349.00",
+      categoryName: "Pizza",
+      taxRate: "5.00",
+      variants: [
+        { attributeName: "Size", attributeValue: "Regular", extraPrice: "0.00" },
+        { attributeName: "Size", attributeValue: "Medium", extraPrice: "80.00" },
+        { attributeName: "Size", attributeValue: "Large", extraPrice: "150.00" },
+      ],
+    },
 
     // ── Pasta ────────────────────────────────────────────────────────────
     {
@@ -472,6 +532,13 @@ async function seed(): Promise<void> {
       categoryName: "Pasta",
       taxRate: "5.00",
     },
+    {
+      name: "Penne Vodka Sauce",
+      description: "Penne in a creamy tomato sauce (alcohol-free)",
+      price: "209.00",
+      categoryName: "Pasta",
+      taxRate: "5.00",
+    },
 
     // ── Burgers ──────────────────────────────────────────────────────────
     {
@@ -494,8 +561,8 @@ async function seed(): Promise<void> {
       ],
     },
     {
-      name: "Chicken Zinger Burger",
-      description: "Spicy crispy chicken fillet with coleslaw and mayo",
+      name: "Veg Zinger Burger",
+      description: "Spicy crispy veg fillet with coleslaw and mayo",
       price: "199.00",
       categoryName: "Burgers",
       taxRate: "5.00",
@@ -522,7 +589,7 @@ async function seed(): Promise<void> {
     {
       name: "Double Stack Burger",
       description:
-        "Two beef-style patties, cheddar, bacon strips, and BBQ sauce",
+        "Two veggie-style patties, cheddar, facon strips, and BBQ sauce",
       price: "279.00",
       categoryName: "Burgers",
       taxRate: "5.00",
@@ -534,11 +601,18 @@ async function seed(): Promise<void> {
       categoryName: "Burgers",
       taxRate: "5.00",
     },
+    {
+      name: "Aloo Tikki Burger",
+      description: "Crispy potato and pea patty with tangy tamarind chutney",
+      price: "109.00",
+      categoryName: "Burgers",
+      taxRate: "5.00",
+    },
 
     // ── Sandwiches ───────────────────────────────────────────────────────
     {
-      name: "Club Sandwich",
-      description: "Triple-decker with grilled chicken, egg, lettuce, and mayo",
+      name: "Veg Club Sandwich",
+      description: "Triple-decker with grilled paneer, cucumber, lettuce, and mayo",
       price: "179.00",
       categoryName: "Sandwiches",
       taxRate: "5.00",
@@ -558,8 +632,8 @@ async function seed(): Promise<void> {
       taxRate: "5.00",
     },
     {
-      name: "Chicken Mayo Sandwich",
-      description: "Shredded chicken with mayo, celery, and mixed greens",
+      name: "Corn & Mayo Sandwich",
+      description: "Sweet corn and peas with mayo, celery, and mixed greens",
       price: "169.00",
       categoryName: "Sandwiches",
       taxRate: "5.00",
@@ -568,6 +642,13 @@ async function seed(): Promise<void> {
       name: "Veggie Delight Sandwich",
       description: "Fresh cucumber, tomato, lettuce, and hummus spread",
       price: "99.00",
+      categoryName: "Sandwiches",
+      taxRate: "5.00",
+    },
+    {
+      name: "Bombay Grilled Sandwich",
+      description: "Spicy potato mix with green chutney and veggies",
+      price: "139.00",
       categoryName: "Sandwiches",
       taxRate: "5.00",
     },
@@ -671,6 +752,13 @@ async function seed(): Promise<void> {
       categoryName: "Beverages",
       taxRate: "5.00",
     },
+    {
+      name: "Iced Caramel Macchiato",
+      description: "Cold espresso, vanilla syrup, milk, and caramel drizzle",
+      price: "159.00",
+      categoryName: "Beverages",
+      taxRate: "5.00",
+    },
 
     // ── Desserts ─────────────────────────────────────────────────────────
     {
@@ -705,6 +793,13 @@ async function seed(): Promise<void> {
       name: "Ice Cream Sundae",
       description: "Three scoops with chocolate sauce, nuts, and cherry on top",
       price: "179.00",
+      categoryName: "Desserts",
+      taxRate: "5.00",
+    },
+    {
+      name: "Red Velvet Cake",
+      description: "Classic red velvet with cream cheese frosting",
+      price: "189.00",
       categoryName: "Desserts",
       taxRate: "5.00",
     },
@@ -762,6 +857,13 @@ async function seed(): Promise<void> {
       categoryName: "Milkshakes",
       taxRate: "5.00",
     },
+    {
+      name: "Vanilla Bean Milkshake",
+      description: "Classic vanilla milkshake made with real vanilla bean",
+      price: "139.00",
+      categoryName: "Milkshakes",
+      taxRate: "5.00",
+    },
 
     // ── Quesadillas ──────────────────────────────────────────────────────
     {
@@ -780,8 +882,8 @@ async function seed(): Promise<void> {
       taxRate: "5.00",
     },
     {
-      name: "Chicken Quesadilla",
-      description: "Shredded grilled chicken with jalapeños and salsa",
+      name: "Corn & Cheese Quesadilla",
+      description: "Sweet corn and jalapeños with salsa",
       price: "219.00",
       categoryName: "Quesadillas",
       taxRate: "5.00",
@@ -819,7 +921,7 @@ async function seed(): Promise<void> {
     {
       name: "Loaded Fries",
       description:
-        "Fries topped with cheese, jalapeños, sour cream, and bacon bits",
+        "Fries topped with cheese, jalapeños, sour cream, and crispy facon bits",
       price: "189.00",
       categoryName: "Fries",
       taxRate: "5.00",
@@ -841,15 +943,15 @@ async function seed(): Promise<void> {
       taxRate: "5.00",
     },
     {
-      name: "Chicken Tikka Frankie",
-      description: "Tandoori chicken pieces with mint mayo and pickled onions",
+      name: "Soya Tikka Frankie",
+      description: "Tandoori soya chunks with mint mayo and pickled onions",
       price: "149.00",
       categoryName: "Frankies",
       taxRate: "5.00",
     },
     {
-      name: "Egg Frankie",
-      description: "Masala egg wrap with green chutney and crispy onions",
+      name: "Aloo Frankie",
+      description: "Masala potato wrap with green chutney and crispy onions",
       price: "99.00",
       categoryName: "Frankies",
       taxRate: "5.00",
@@ -916,9 +1018,9 @@ async function seed(): Promise<void> {
       taxRate: "5.00",
     },
     {
-      name: "Chicken Burrito",
+      name: "Tofu Burrito",
       description:
-        "Grilled chicken with Mexican rice, beans, cheese, and sour cream",
+        "Grilled tofu with Mexican rice, beans, cheese, and sour cream",
       price: "229.00",
       categoryName: "Burritos",
       taxRate: "5.00",
@@ -955,9 +1057,9 @@ async function seed(): Promise<void> {
       taxRate: "5.00",
     },
     {
-      name: "Teriyaki Chicken Bowl",
+      name: "Teriyaki Tofu Bowl",
       description:
-        "Grilled teriyaki chicken on steamed rice with sesame and scallions",
+        "Grilled teriyaki tofu on steamed rice with sesame and scallions",
       price: "229.00",
       categoryName: "Rice Bowls",
       taxRate: "5.00",
@@ -1150,7 +1252,7 @@ async function seed(): Promise<void> {
     // Order 2: Sent to kitchen — mostly done
     await createDummyOrder(2, 2, "sent_to_kitchen", [
       {
-        productName: "Chicken Zinger Burger",
+        productName: "Veg Zinger Burger",
         quantity: 1,
         kitchenStatus: "done",
       },
@@ -1166,7 +1268,7 @@ async function seed(): Promise<void> {
     await createDummyOrder(4, 3, "confirmed", [
       { productName: "Alfredo Pasta", quantity: 1, kitchenStatus: "to_cook" },
       { productName: "Tomato Soup", quantity: 2, kitchenStatus: "to_cook" },
-      { productName: "Club Sandwich", quantity: 1, kitchenStatus: "to_cook" },
+      { productName: "Veg Club Sandwich", quantity: 1, kitchenStatus: "to_cook" },
     ]);
 
     // Order 4: Sent to kitchen — all done (ready for pickup)
@@ -1182,7 +1284,7 @@ async function seed(): Promise<void> {
 
     // Order 5: Completed — all done
     await createDummyOrder(8, 5, "completed", [
-      { productName: "Chicken Quesadilla", quantity: 2, kitchenStatus: "done" },
+      { productName: "Corn & Cheese Quesadilla", quantity: 2, kitchenStatus: "done" },
       { productName: "Loaded Fries", quantity: 1, kitchenStatus: "done" },
       { productName: "Mango Lassi", quantity: 2, kitchenStatus: "done" },
     ]);

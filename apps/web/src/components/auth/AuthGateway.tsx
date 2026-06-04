@@ -208,7 +208,7 @@ export default function AuthGateway({ initialMode }: AuthGatewayProps) {
               </p>
             </div>
 
-            {mode === "signup" && activeTab === "staff" && (
+            {mode === "signup" && (
               <div className="flex flex-col gap-1.5">
                 <label className="text-[#8E7E72] font-semibold text-xs tracking-wide uppercase">
                   Name
@@ -258,29 +258,23 @@ export default function AuthGateway({ initialMode }: AuthGatewayProps) {
             </button>
           </form>
 
-          {activeTab === "customer" ? (
-             <p className="text-center text-[10px] mt-4 text-[#5A4F47]">
-               Customer sign in. View your orders and place orders.
-             </p>
-          ) : (
-            <div className="mt-5 pt-4 text-center text-xs border-t border-[#3A342E] text-[#8E7E72]">
-              {mode === "signin" ? (
-                <>
-                  Don&apos;t have an admin account?{" "}
-                  <button type="button" onClick={handleSignUpClick} className="font-semibold text-[oklch(70%_0.18_155)]">
-                    Register
-                  </button>
-                </>
-              ) : (
-                <>
-                  Already have an admin account?{" "}
-                  <button type="button" onClick={handleSignInClick} className="font-semibold text-[oklch(65%_0.18_75)]">
-                    Sign In
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+          <div className="mt-5 pt-4 text-center text-xs border-t border-[#3A342E] text-[#8E7E72]">
+            {mode === "signin" ? (
+              <>
+                Don&apos;t have an account?{" "}
+                <button type="button" onClick={handleSignUpClick} className="font-semibold text-[oklch(70%_0.18_155)]">
+                  Register
+                </button>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <button type="button" onClick={handleSignInClick} className="font-semibold text-[oklch(65%_0.18_75)]">
+                  Sign In
+                </button>
+              </>
+            )}
+          </div>
         </div>
 
         {/* ─── Footer Status ────────────────────────────────── */}

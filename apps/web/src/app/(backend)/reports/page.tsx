@@ -4,6 +4,7 @@ import {
   sessions,
   orderItems,
   products,
+  productCategories,
   users,
 } from "@web/server/db/schema";
 import { desc, sql, eq, and, gte, lte, exists, inArray } from "drizzle-orm";
@@ -297,13 +298,55 @@ async function DashboardContent({ filters }: { filters: ReportFiltersState }) {
   const aov = totalOrders > 0 ? totalRevenue / totalOrders : 0;
   const activeSessions = Number(activeSessionsResult[0]?.count ?? 0);
 
-  // Category breakdown calculations (static fallback if no DB items match yet)
-  const categoryStats = [
-    { name: "Specialty Coffee", percentage: 55, color: "oklch(65% 0.18 75)" },
-    { name: "Desserts & Cakes", percentage: 25, color: "oklch(70% 0.12 75)" },
-    { name: "Signature Teas", percentage: 12, color: "oklch(75% 0.08 75)" },
-    { name: "Savory & Bakes", percentage: 8, color: "oklch(80% 0.05 75)" },
+  // Category breakdown from real order data
+  const categoryColors = [
+    "oklch(65% 0.18 75)",
+    "oklch(70% 0.14 75)",
+    "oklch(75% 0.10 75)",
+    "oklch(80% 0.06 75)",
+    "oklch(60% 0.16 35)",
+    "oklch(70% 0.12 35)",
   ];
+
+  let categoryStats: { name: string; percentage: number; revenue: number; color: string }[] = [];
+  try {
+    // Build category conditions matching the same order filters
+    const catOrderConditions: any[] = [eq(orders.status, "completed")];
+    if (filters.sessionId) catOrderConditions.push(eq(orders.sessionId, filters.sessionId));
+    if (filters.userId) catOrderConditions.push(eq(orders.userId, filters.userId));
+    if (filters.startDate) catOrderConditions.push(gte(orders.createdAt, new Date(filters.startDate)));
+    if (filters.endDate) {
+      const end = new Date(filters.endDate);
+      end.setHours(23, 59, 59, 999);
+      catOrderConditions.push(lte(orders.createdAt, end));
+    }
+
+    const catRevenue = await db
+      .select({
+        categoryName: productCategories.name,
+        categoryColor: productCategories.color,
+        totalRevenue: sql<number>`COALESCE(SUM(CAST(${orderItems.lineTotal} AS NUMERIC)), 0)`,
+      })
+      .from(orderItems)
+      .innerJoin(orders, eq(orderItems.orderId, orders.id))
+      .innerJoin(products, eq(orderItems.productId, products.id))
+      .innerJoin(productCategories, eq(products.categoryId, productCategories.id))
+      .where(and(...catOrderConditions))
+      .groupBy(productCategories.name, productCategories.color)
+      .orderBy(sql`SUM(CAST(${orderItems.lineTotal} AS NUMERIC)) DESC`)
+      .limit(6);
+
+    const catTotalRevenue = catRevenue.reduce((sum, c) => sum + Number(c.totalRevenue), 0);
+
+    categoryStats = catRevenue.map((c, i) => ({
+      name: c.categoryName,
+      percentage: catTotalRevenue > 0 ? Math.round((Number(c.totalRevenue) / catTotalRevenue) * 100) : 0,
+      revenue: Number(c.totalRevenue),
+      color: c.categoryColor || categoryColors[i % categoryColors.length],
+    }));
+  } catch (err) {
+    console.error("Category stats query failed:", err);
+  }
 
   return (
     <>
@@ -493,55 +536,100 @@ async function DashboardContent({ filters }: { filters: ReportFiltersState }) {
                 </p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="border-b border-[#2C2724]/30 text-[#8E7E72] uppercase tracking-wider font-bold text-[10px]">
-                      <th className="py-2.5">User</th>
-                      <th className="py-2.5">Status</th>
-                      <th className="py-2.5">Open Date</th>
-                      <th className="py-2.5 text-right">Opening Bal</th>
-                      <th className="py-2.5 text-right">Closing Bal</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#2C2724]/20 text-[#CBB9A8]">
-                    {recentShifts.map((sh) => (
-                      <tr
-                        key={sh.id}
-                        className="hover:bg-[#1E1A18]/50 transition-colors"
-                      >
-                        <td className="py-3 font-semibold text-[#EADED2]">
-                          {sh.user.name}
-                        </td>
-                        <td className="py-3">
-                          <span
-                            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider border ${
-                              sh.status === "open"
-                                ? "bg-amber-500/5 border-amber-500/20 text-amber-400"
-                                : "bg-neutral-500/5 border-neutral-500/20 text-[#8E7E72]"
-                            }`}
-                          >
-                            {sh.status}
+              <div className="space-y-3">
+                {recentShifts.map((sh) => {
+                  const isOpen = sh.status === "open";
+                  const openDate = new Date(sh.openedAt);
+                  const closeDate = sh.closedAt ? new Date(sh.closedAt) : null;
+                  const now = new Date();
+                  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                  const yesterday = new Date(today);
+                  yesterday.setDate(yesterday.getDate() - 1);
+
+                  const isToday = openDate >= today;
+                  const isYesterday = openDate >= yesterday && openDate < today;
+
+                  const dateLabel = isToday
+                    ? "Today"
+                    : isYesterday
+                      ? "Yesterday"
+                      : openDate.toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
+
+                  return (
+                    <div
+                      key={sh.id}
+                      className={`rounded-xl border p-4 transition-colors ${
+                        isOpen
+                          ? "border-amber-500/20 bg-amber-500/[0.03]"
+                          : "border-[#2C2724]/40 bg-[#1E1A18]/30"
+                      }`}
+                    >
+                      {/* Row 1: User, Status Badge, Date */}
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2.5">
+                          <div className={`h-7 w-7 rounded-lg flex items-center justify-center text-[10px] font-black uppercase ${
+                            isOpen
+                              ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                              : "bg-[#2C2724]/50 text-[#8E7E72] border border-[#2C2724]/60"
+                          }`}>
+                            {sh.user.name?.charAt(0) || "?"}
+                          </div>
+                          <div>
+                            <span className="text-xs font-bold text-[#EADED2] block leading-tight">
+                              {sh.user.name}
+                            </span>
+                            <span className="text-[10px] text-[#8E7E72]">
+                              {dateLabel} · {openDate.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                            </span>
+                          </div>
+                        </div>
+                        <span
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider border ${
+                            isOpen
+                              ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400"
+                              : "bg-neutral-500/5 border-neutral-500/20 text-[#8E7E72]"
+                          }`}
+                        >
+                          <span className={`h-1.5 w-1.5 rounded-full ${
+                            isOpen ? "bg-emerald-400 animate-pulse" : "bg-[#8E7E72]"
+                          }`} />
+                          {isOpen ? "Open" : "Closed"}
+                        </span>
+                      </div>
+
+                      {/* Row 2: Opening & Closing Amounts */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="rounded-lg bg-[#161312] border border-[#2C2724]/30 px-3 py-2">
+                          <span className="text-[9px] font-bold uppercase tracking-widest text-[#8E7E72] block mb-0.5">
+                            Opening
                           </span>
-                        </td>
-                        <td className="py-3 text-[#8E7E72]">
-                          {new Date(sh.openedAt).toLocaleDateString("en-IN", {
-                            day: "2-digit",
-                            month: "short",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </td>
-                        <td className="py-3 text-right font-semibold">
-                          ₹{parseFloat(sh.openingBalance).toFixed(2)}
-                        </td>
-                        <td className="py-3 text-right font-semibold text-[#EADED2]">
-                          {sh.closingBalance ? `₹${parseFloat(sh.closingBalance).toFixed(2)}` : "-"}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          <span className="text-sm font-black text-[#CBB9A8]">
+                            ₹{parseFloat(sh.openingBalance).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </span>
+                        </div>
+                        <div className="rounded-lg bg-[#161312] border border-[#2C2724]/30 px-3 py-2">
+                          <span className="text-[9px] font-bold uppercase tracking-widest text-[#8E7E72] block mb-0.5">
+                            Closing
+                          </span>
+                          {sh.closingBalance ? (
+                            <span className="text-sm font-black text-[#EADED2]">
+                              ₹{parseFloat(sh.closingBalance).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </span>
+                          ) : (
+                            <span className="text-sm font-black text-[#8E7E72]/50">—</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Row 3: Closed-at timestamp (only for closed shifts) */}
+                      {!isOpen && closeDate && (
+                        <div className="mt-2 pt-2 border-t border-[#2C2724]/20 text-[10px] text-[#8E7E72]">
+                          Closed on {closeDate.toLocaleDateString("en-IN", { day: "2-digit", month: "short" })} at {closeDate.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -555,46 +643,63 @@ async function DashboardContent({ filters }: { filters: ReportFiltersState }) {
                 Revenue Share
               </h3>
               <p className="text-[10px] text-[#8E7E72] mt-0.5">
-                Top performing product categories in the store.
+                Top performing product categories by sales revenue.
               </p>
             </div>
 
-            {/* Custom high-density category bars */}
-            <div className="space-y-4 pt-1">
-              {categoryStats.map((stat) => (
-                <div key={stat.name} className="space-y-2">
-                  <div className="flex items-center justify-between text-xs font-semibold">
-                    <span className="text-[#CBB9A8] flex items-center gap-2">
-                      <span
-                        className="h-2 w-2 rounded-full"
-                        style={{ backgroundColor: stat.color }}
+            {/* Category bars from real data */}
+            {categoryStats.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-8 text-center space-y-2">
+                <div className="text-2xl">📊</div>
+                <h4 className="text-xs font-bold text-[#CBB9A8]">
+                  No Sales Data Yet
+                </h4>
+                <p className="text-4xs text-[#8E7E72] max-w-[200px]">
+                  Revenue share breakdown will appear here once orders are completed.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4 pt-1">
+                {categoryStats.map((stat) => (
+                  <div key={stat.name} className="space-y-2">
+                    <div className="flex items-center justify-between text-xs font-semibold">
+                      <span className="text-[#CBB9A8] flex items-center gap-2">
+                        <span
+                          className="h-2 w-2 rounded-full"
+                          style={{ backgroundColor: stat.color }}
+                        />
+                        {stat.name}
+                      </span>
+                      <span className="text-[#EADED2] font-black flex items-center gap-2">
+                        <span className="text-[10px] font-semibold text-[#8E7E72]">
+                          ₹{stat.revenue.toLocaleString("en-IN", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                        </span>
+                        {stat.percentage}%
+                      </span>
+                    </div>
+                    {/* Visual Bar Accent */}
+                    <div className="h-2 w-full rounded-full bg-[#1C1816] overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{
+                          width: `${stat.percentage}%`,
+                          backgroundColor: stat.color,
+                        }}
                       />
-                      {stat.name}
-                    </span>
-                    <span className="text-[#EADED2] font-black">
-                      {stat.percentage}%
-                    </span>
+                    </div>
                   </div>
-                  {/* Visual Bar Accent */}
-                  <div className="h-2 w-full rounded-full bg-[#1C1816] overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{
-                        width: `${stat.percentage}%`,
-                        backgroundColor: stat.color,
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
-            <div className="rounded-xl border border-amber-500/10 bg-amber-500/5 p-4 text-[10px] text-[#8E7E72] leading-relaxed">
-              💡 <span className="font-bold text-[#EADED2]">Tip:</span>{" "}
-              Specialty Coffee accounts for over half of total revenue. Consider
-              featuring premium coffee add-ons at the top of table checkout
-              pages to boost average ticket values.
-            </div>
+            {categoryStats.length > 0 && (
+              <div className="rounded-xl border border-amber-500/10 bg-amber-500/5 p-4 text-[10px] text-[#8E7E72] leading-relaxed">
+                💡 <span className="font-bold text-[#EADED2]">Insight:</span>{" "}
+                {categoryStats[0].name} leads with {categoryStats[0].percentage}% of total revenue
+                (₹{categoryStats[0].revenue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}).
+                {categoryStats.length > 1 && ` Followed by ${categoryStats[1].name} at ${categoryStats[1].percentage}%.`}
+              </div>
+            )}
           </div>
         </div>
       </div>
