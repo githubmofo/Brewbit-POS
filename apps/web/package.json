@@ -42,7 +42,9 @@
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.31.10",
     "tailwindcss": "^4",
-    "typescript": "^5",
+    "typescript": "^5"
+  },
+  "optionalDependencies": {
     "lightningcss-linux-x64-gnu": "1.32.0",
     "lightningcss-linux-x64-musl": "1.32.0",
     "lightningcss-linux-arm64-gnu": "1.32.0",
