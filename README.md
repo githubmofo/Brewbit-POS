@@ -31,7 +31,7 @@ Built on a robust Turborepo monorepo architecture, Brewbit POS guarantees 100% e
 
 You can access and deploy the Brewbit POS system in multiple ways:
 
-- **🌐 Live Demo:** brewbit-pos.vercel.app(#)
+- **🌐 Live Demo:** brewbit-pos.vercel.app
 - **💻 Desktop Client (PWA):** Install Brewbit directly to your desktop or tablet via your browser's "Install App" feature for a native-like full-screen kiosk experience.
 - **📦 Source Code:** Clone the repository below to run it locally or deploy it to Vercel/Railway.
 
