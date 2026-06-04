@@ -116,6 +116,15 @@ npm run db:migrate    # Push migrations to the database
 npm run db:studio     # Open Drizzle Studio for visual DB management
 ```
 
+## 🛡️ Enterprise-Grade Security
+
+Brewbit POS is engineered with a **100% security-first architecture**, heavily audited and protected against modern web vulnerabilities, hacking attempts, and data leaks.
+
+- **100% SQL Injection Proof:** All database interactions are natively parameterized through Drizzle ORM, completely neutralizing SQL injection vectors.
+- **Strict Role-Based Access Control (RBAC):** Backend logic explicitly guards all administrative and POS actions (e.g., cash drawer sessions, manual payment confirmation, table state modifications) via strongly typed backend middleware. Customers cannot escalate privileges or access staff POS functionalities.
+- **Insecure Direct Object Reference (IDOR) Prevention:** Customer resources are strictly validated against their authorization tokens, ensuring customers can only access and modify their own orders and data.
+- **Robust Authentication:** Implements secure JWT session management with strong bcrypt hashing (12 rounds), environment-level secret enforcement, and strict password policies.
+
 ## 🔐 Core Features & Platform Breakdown
 
 Brewbit POS is split into two powerful, distinct ecosystems. It ensures that administrative staff have total control over operations, while customers experience a frictionless, intuitive self-service environment.

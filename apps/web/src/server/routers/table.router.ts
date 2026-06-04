@@ -3,6 +3,7 @@ import {
   publicProcedure,
   protectedProcedure,
   adminProcedure,
+  cashierProcedure,
 } from "../trpc";
 import { tables } from "../db/schema";
 import { createTableSchema, updateTableSchema } from "@pos/validators";
@@ -70,7 +71,7 @@ export const tableRouter = createTRPCRouter({
     }),
 
   // Protected procedure for cashiers to alter status (free, occupied, dirty)
-  update: protectedProcedure
+  update: cashierProcedure
     .input(updateTableSchema)
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input;
@@ -83,7 +84,7 @@ export const tableRouter = createTRPCRouter({
     }),
 
   // Lock a table for the current cashier
-  lock: protectedProcedure
+  lock: cashierProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       const table = await ctx.db.query.tables.findFirst({
@@ -114,7 +115,7 @@ export const tableRouter = createTRPCRouter({
     }),
 
   // Unlock a table
-  unlock: protectedProcedure
+  unlock: cashierProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       const table = await ctx.db.query.tables.findFirst({

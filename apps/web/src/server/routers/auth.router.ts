@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { db } from "../db";
 import { users } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { hashPassword, verifyPassword } from "../../lib/passwords";
 import { signAccessToken, signRefreshToken, verifyToken } from "../../lib/auth";
 import { cookies } from "next/headers";
@@ -24,10 +24,15 @@ export const authRouter = createTRPCRouter({
     .input(z.object({
       name: z.string().min(2),
       email: z.string().email(),
-      password: z.string().min(6),
+      password: z.string().min(8),
       role: z.enum(["admin", "cashier", "kitchen", "customer"]).optional().default("customer"),
     }))
     .mutation(async ({ input }) => {
+      // Security Check: Force role to "customer" unless it's the very first user in the database
+      const totalUsers = await db.select({ count: sql<number>`count(*)` }).from(users);
+      const isFirstUser = Number(totalUsers[0]?.count ?? 0) === 0;
+      const assignedRole = isFirstUser && input.role ? input.role : "customer";
+
       const existing = await db.select().from(users).where(eq(users.email, input.email)).limit(1);
       if (existing.length > 0) {
         throw new TRPCError({ code: "CONFLICT", message: "Email already in use" });
@@ -39,7 +44,7 @@ export const authRouter = createTRPCRouter({
         name: input.name,
         email: input.email,
         passwordHash: hashedPassword,
-        role: input.role,
+        role: assignedRole,
       }).returning();
       
       const user = inserted[0];
@@ -110,7 +115,7 @@ export const authRouter = createTRPCRouter({
     .input(z.object({
       name: z.string().min(2),
       email: z.string().email(),
-      newPassword: z.string().min(6).optional().or(z.literal("")),
+      newPassword: z.string().min(8).optional().or(z.literal("")),
     }))
     .mutation(async ({ ctx, input }) => {
       // Check if email is being changed and is already in use

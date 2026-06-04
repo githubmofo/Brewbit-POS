@@ -252,6 +252,14 @@ export const orderRouter = createTRPCRouter({
         });
       }
 
+      // SECURITY: IDOR Prevention
+      if (ctx.user.role === "customer" && orderRecord.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Not authorized to modify this order.",
+        });
+      }
+
       if (
         orderRecord.status === "completed" ||
         orderRecord.status === "cancelled"
@@ -333,12 +341,21 @@ export const orderRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const itemRecord = await ctx.db.query.orderItems.findFirst({
         where: eq(orderItems.id, input.orderItemId),
+        with: { order: true },
       });
 
-      if (!itemRecord) {
+      if (!itemRecord || !itemRecord.order) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Order line item not found.",
+        });
+      }
+
+      // SECURITY: IDOR Prevention
+      if (ctx.user.role === "customer" && itemRecord.order.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Not authorized to modify this order.",
         });
       }
 
@@ -377,6 +394,20 @@ export const orderRouter = createTRPCRouter({
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Order not found.",
+        });
+      }
+
+      // SECURITY: IDOR Prevention and Role Authorization
+      if (ctx.user.role === "customer" && orderRecord.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Not authorized to access this order.",
+        });
+      }
+      if (ctx.user.role === "customer" && input.status !== "cancelled") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Customers are only allowed to cancel orders.",
         });
       }
 

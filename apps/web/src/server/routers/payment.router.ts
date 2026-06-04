@@ -1,4 +1,4 @@
-import { createTRPCRouter, protectedProcedure, adminProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, adminProcedure, cashierProcedure } from "../trpc";
 import { payments, orders, tables, paymentMethodsConfig } from "../db/schema";
 import {
   processPaymentSchema,
@@ -44,7 +44,7 @@ export const paymentRouter = createTRPCRouter({
     }),
 
   // Process a cash, card/digital, or UPI QR transaction
-  process: protectedProcedure
+  process: cashierProcedure
     .input(processPaymentSchema)
     .mutation(async ({ ctx, input }) => {
       const orderRecord = await ctx.db.query.orders.findFirst({
@@ -104,7 +104,7 @@ export const paymentRouter = createTRPCRouter({
     }),
 
   // Cashier manually confirms a pending payment (like validating UPI QR receipt)
-  confirm: protectedProcedure
+  confirm: cashierProcedure
     .input(confirmPaymentSchema)
     .mutation(async ({ ctx, input }) => {
       const paymentRecord = await ctx.db.query.payments.findFirst({

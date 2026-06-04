@@ -1,4 +1,4 @@
-import { createTRPCRouter, protectedProcedure, adminProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, adminProcedure, cashierProcedure } from "../trpc";
 import { sessions, tables } from "../db/schema";
 import { openSessionSchema, closeSessionSchema } from "@pos/validators";
 import { eq, and } from "drizzle-orm";
@@ -24,7 +24,7 @@ export const sessionRouter = createTRPCRouter({
   }),
 
   // Opens a new cashier register drawer session with an initial opening balance
-  open: protectedProcedure
+  open: cashierProcedure
     .input(openSessionSchema)
     .mutation(async ({ ctx, input }) => {
       // Enforce lock: one open session per cashier employee
@@ -55,7 +55,7 @@ export const sessionRouter = createTRPCRouter({
     }),
 
   // Closes an active register session and logs the ending drawer balance
-  close: protectedProcedure
+  close: cashierProcedure
     .input(closeSessionSchema)
     .mutation(async ({ ctx, input }) => {
       const existing = await ctx.db.query.sessions.findFirst({

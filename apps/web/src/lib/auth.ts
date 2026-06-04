@@ -1,6 +1,9 @@
 import { SignJWT, jwtVerify } from "jose";
 
-const secretKey = process.env.JWT_SECRET || "default_super_secret_key_change_in_production";
+const secretKey = process.env.JWT_SECRET;
+if (!secretKey) {
+  throw new Error("CRITICAL SECURITY ERROR: JWT_SECRET environment variable is missing.");
+}
 const key = new TextEncoder().encode(secretKey);
 
 export async function signAccessToken(payload: { userId: string; role: string; tokenVersion: number }): Promise<string> {

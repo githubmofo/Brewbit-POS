@@ -137,3 +137,27 @@ export const kitchenProcedure = t.procedure.use(({ ctx, next }) => {
     },
   });
 });
+
+// Enforces Cashier role validation (Admin or Cashier)
+export const cashierProcedure = t.procedure.use(({ ctx, next }) => {
+  if (!ctx.jwtUserId || !ctx.user) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Authentication is required to access this resource.",
+    });
+  }
+
+  if (ctx.user.role !== "cashier" && ctx.user.role !== "admin") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Cashier or Administrative access is required to perform this action.",
+    });
+  }
+
+  return next({
+    ctx: {
+      jwtUserId: ctx.jwtUserId,
+      user: ctx.user,
+    },
+  });
+});
