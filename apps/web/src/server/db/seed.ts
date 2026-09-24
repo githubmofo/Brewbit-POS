@@ -17,6 +17,7 @@ import { eq, sql } from "drizzle-orm";
 import * as schema from "./schema";
 import path from "path";
 import fs from "fs";
+import bcrypt from "bcryptjs";
 
 // ─── Load .env manually (same as drizzle.config.ts) ──────────────────────────
 
@@ -1142,17 +1143,43 @@ async function seed(): Promise<void> {
   // ══════════════════════════════════════════════════════════════════════════
   console.log("\n🎫 Inserting Kitchen Dummy Orders...");
 
-  // Find the admin user
-  const adminUser = await db.query.users.findFirst({
+  // Find or create the admin user
+  let adminUser = await db.query.users.findFirst({
     where: eq(schema.users.role, "admin"),
   });
 
   if (!adminUser) {
-    console.log(
-      "   ⚠ No admin user found. Sign in as admin@brewbit.com first, then re-run.",
-    );
-    console.log("   Skipping kitchen dummy orders.");
-  } else {
+    console.log("   👑 Creating default admin user (admin@brewbit.com)...");
+    const passwordHash = await bcrypt.hash("password123", 10);
+    const [newAdmin] = await db
+      .insert(schema.users)
+      .values({
+        name: "Brewbit Admin",
+        email: "admin@brewbit.com",
+        passwordHash,
+        role: "admin",
+      })
+      .returning();
+    adminUser = newAdmin;
+
+    console.log("   👑 Creating alternate admin user (ladjenish2905@gmail.com)...");
+    await db.insert(schema.users).values({
+      name: "Jenish (Admin)",
+      email: "ladjenish2905@gmail.com",
+      passwordHash,
+      role: "admin",
+    });
+
+    console.log("   👤 Creating customer user (ladjenish0529@gmail.com)...");
+    await db.insert(schema.users).values({
+      name: "Jenish (Customer)",
+      email: "ladjenish0529@gmail.com",
+      passwordHash,
+      role: "customer",
+    });
+  }
+
+  if (adminUser) {
     // Create a session for the dummy orders
     const [dummySession] = await db
       .insert(schema.sessions)

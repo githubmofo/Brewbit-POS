@@ -27,13 +27,27 @@ Built on a robust Turborepo monorepo architecture, Brewbit POS guarantees 100% e
 
 ---
 
+## 🔑 Default Credentials
+
+Use these pre-configured demo credentials to sign in and explore the application:
+
+| Portal | Email | Password | Role |
+|---|---|---|---|
+| **🛡️ Staff / Admin** | `admin@brewbit.com` | `password123` | Full Admin Privileges |
+| **🛡️ Staff / Admin (Alternate)** | `ladjenish2905@gmail.com` | `password123` | Full Admin Privileges |
+| **👤 Customer Portal** | `ladjenish0529@gmail.com` | `password123` | Customer Order & History |
+
+> **Note:** You can also register a new Admin account at any time by navigating to `/login`, selecting the **Staff / Admin** tab, and clicking **Register**.
+
+---
+
 ## 📥 Download & Access
 
 You can access and deploy the Brewbit POS system in multiple ways:
 
-- 🌐 **Live Demo:** https://brewbit-pos.vercel.app
-- **💻 Desktop Client (PWA):** Install Brewbit directly to your desktop or tablet via your browser's "Install App" feature for a native-like full-screen kiosk experience.
-- **📦 Source Code:** Clone the repository below to run it locally or deploy it to Vercel/Railway.
+- 🌐 **Live Demo:** [https://brewbit-pos.vercel.app](https://brewbit-pos.vercel.app)
+- 💻 **Desktop Client (PWA):** Install Brewbit directly to your desktop or tablet via your browser's "Install App" feature for a native-like full-screen kiosk experience.
+- 📦 **Source Code:** Clone the repository below to run it locally or deploy it to Vercel/Railway.
 
 ---
 
@@ -51,14 +65,14 @@ npm install
 
 # 3. Setup environment variables
 cp apps/web/.env.example apps/web/.env
-# (Fill in your Postgres Database URL in the .env file)
+# (Fill in your Postgres Database URL and JWT Secret in .env)
 
 # 4. Generate & Push Database Schema
 npm run db:generate
 npm run db:migrate
 
-# 5. Seed the database with initial products and tables
-cd apps/web && npm run db:seed && cd ../../
+# 5. Seed the database with initial products, tables, floors, and admin user
+npm run db:seed
 
 # 6. Start the development server
 npm run dev
@@ -66,12 +80,16 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
+---
+
 ## 💻 Requirements
 
 To run this project, you will need the following installed:
 - **Node.js**: v20 or higher
 - **Package Manager**: npm v11+
-- **Database**: PostgreSQL 15+
+- **Database**: PostgreSQL 15+ (e.g. Supabase, Neon, or local Postgres)
+
+---
 
 ## 📁 Project Structure
 
@@ -93,14 +111,23 @@ odoo-pos-cafe/
 └── package.json               # Monorepo root config
 ```
 
+---
+
 ## ⚙️ Environment Variables
 
-The application requires specific environment variables to function properly. You must create a `.env` file inside `apps/web/`.
+The application requires specific environment variables to function properly. You can define them in `apps/web/.env` or root `.env`.
 
 | Variable | Required | Description |
 |---|---|---|
-| `DATABASE_URL` | Yes | Your PostgreSQL connection string. |
-| `NODE_ENV` | No | `development` or `production` |
+| `DATABASE_URL` | Yes | PostgreSQL connection string (Session pooler with PgBouncer). |
+| `DIRECT_URL` | No | Direct PostgreSQL connection string (for migrations). |
+| `JWT_SECRET` | Yes | Secret key for signing and verifying JWT tokens. |
+| `NEXT_PUBLIC_APP_URL` | No | Base application URL (default: `http://localhost:3000`). |
+| `NODE_ENV` | No | `development` or `production`. |
+| `ENABLE_POS` | No | Feature flag to enable/disable POS functionality (`true`/`false`). |
+| `ENABLE_3D_FLOOR` | No | Feature flag to enable/disable 3D Floor plan view (`true`/`false`). |
+
+---
 
 ## 🛠️ Scripts & Commands
 
@@ -113,8 +140,11 @@ npm run lint          # Run Biome checks for formatting and linting
 npm run format        # Auto-format codebase via Biome
 npm run db:generate   # Generate Drizzle migration files
 npm run db:migrate    # Push migrations to the database
+npm run db:seed       # Seed database with floors, tables, products, variants, and admin
 npm run db:studio     # Open Drizzle Studio for visual DB management
 ```
+
+---
 
 ## 🛡️ Enterprise-Grade Security
 
@@ -124,6 +154,8 @@ Brewbit POS is engineered with a **100% security-first architecture**, heavily a
 - **Strict Role-Based Access Control (RBAC):** Backend logic explicitly guards all administrative and POS actions (e.g., cash drawer sessions, manual payment confirmation, table state modifications) via strongly typed backend middleware. Customers cannot escalate privileges or access staff POS functionalities.
 - **Insecure Direct Object Reference (IDOR) Prevention:** Customer resources are strictly validated against their authorization tokens, ensuring customers can only access and modify their own orders and data.
 - **Robust Authentication:** Implements secure JWT session management with strong bcrypt hashing (12 rounds), environment-level secret enforcement, and strict password policies.
+
+---
 
 ## 🔐 Core Features & Platform Breakdown
 
@@ -143,9 +175,11 @@ The management and operational backend tailored for cafe staff, cashiers, and ma
 A frictionless self-service environment designed for cafe patrons.
 
 - **Self-Service Sign In & Registration:** Customers can quickly create an account or sign in using the dedicated Customer Gateway on the login page.
-- **Digital Ordering:** (Upcoming) Customers can view the live menu, place orders directly from their tables, and track their order status without needing to flag down a waiter.
+- **Digital Ordering:** Customers can view the live menu, place orders directly from their tables, and track their order status without needing to flag down a waiter.
 - **Instant Digital Payments:** Scan-to-pay UPI QR code generation allows customers to settle their bills instantly from their mobile devices.
 - **Order History:** Customers can review their past visits, favorite orders, and receipts.
+
+---
 
 ## 🤝 Contributing
 
@@ -155,6 +189,14 @@ A frictionless self-service environment designed for cafe patrons.
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+---
+
 ## 👨‍💻 Author
 
 **Jenish Lad**
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
