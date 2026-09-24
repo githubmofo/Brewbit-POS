@@ -39,7 +39,7 @@ function loadRootEnv() {
 
 loadRootEnv();
 
-const dbUrl = process.env.DATABASE_URL;
+const dbUrl = process.env.DIRECT_URL || process.env.DATABASE_URL;
 if (!dbUrl) {
   console.warn(
     "⚠️ WARNING: DATABASE_URL is not set. Drizzle Kit commands will fail.",
